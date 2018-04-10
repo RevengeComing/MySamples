@@ -1,0 +1,50 @@
+import sys
+import asyncio
+import uvloop
+import click
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+from aiohttp import web
+from twylacfg.app import create_app
+
+@click.group()
+def cli():
+    pass
+
+@click.command()
+@click.option('--config', help="Path to customized config file")
+def run(config):
+    """
+    Run twylacfg in production mode
+    """
+    try:
+        app = create_app(config=config)
+        web.run_app(app)
+    except FileNotFoundError:
+        print('No such a config file at %s' % config)
+
+config_sample = """mongodb:
+  host: 'localhost'
+  port: 5432
+  database: 'test'
+"""
+
+@click.command()
+@click.option('--path', default='config.yaml', help="Path to where you want to create it.")
+def generate_config_file(path):
+    """
+    generates sample config file
+    """
+    with open(path, 'w') as f:
+        f.write(config_sample)
+
+
+cli.add_command(generate_config_file)
+cli.add_command(run)
+
+def main():
+    cli()
+
+if __name__ == '__main__':
+    main()
