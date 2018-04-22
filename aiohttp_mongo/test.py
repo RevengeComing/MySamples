@@ -1,5 +1,5 @@
 from coverage import Coverage
-cov = Coverage(source=['twylacfg'])
+cov = Coverage(source=['cnfmanager'])
 cov.start()
 
 
